@@ -1,0 +1,8 @@
+[package]
+name = "wc"
+version = "0.1.0"
+authors = ["Matt Garnett <matt@mattgarnett.com>"]
+edition = "2018"
+
+[dependencies]
+clap = "~2.27.0"
