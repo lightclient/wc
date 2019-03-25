@@ -5,6 +5,7 @@ use std::process;
 #[derive(PartialEq)]
 pub struct Result {
     pub bytes: u32,
+    pub chars: u32,
     pub lines: u32,
     pub words: u32,
     in_word: bool,
@@ -14,6 +15,7 @@ impl Result {
     fn new() -> Result {
        Result {
            bytes: 0,
+           chars: 0,
            lines: 0,
            words: 0,
            in_word: false,
@@ -45,6 +47,10 @@ pub fn analyze_bytes(data: Vec<u8>) -> Result {
             acc.in_word = true;
         }
 
+        if (c & 0xC0) != 0x80 {
+            acc.chars += 1;
+        }
+
         acc
     });
 
@@ -63,14 +69,14 @@ mod tests {
     #[test]
     fn test_empty_string() {
         let test_bytes = "".as_bytes().to_vec();
-        let result = Result { bytes: 0, lines: 0, words: 0, in_word: false };
+        let result = Result { bytes: 0, chars: 0, lines: 0, words: 0, in_word: false };
         assert_eq!(analyze_bytes(test_bytes), result);
     }
 
     #[test]
     fn test_single_line() {
         let test_bytes = "Hello world, this is a string!".as_bytes().to_vec();
-        let result = Result { bytes: 30, lines: 0, words: 6, in_word: false };
+        let result = Result { bytes: 30, chars: 30, lines: 0, words: 6, in_word: false };
         assert_eq!(analyze_bytes(test_bytes), result);
     }
 
@@ -78,14 +84,14 @@ mod tests {
     fn test_emojis() {
         // this emoji should be 4 bytes
         let test_bytes = "rust is 🔥".as_bytes().to_vec();
-        let result = Result { bytes: 12, lines: 0, words: 3, in_word: false };
+        let result = Result { bytes: 12, chars: 9, lines: 0, words: 3, in_word: false };
         assert_eq!(analyze_bytes(test_bytes), result);
     }
 
     #[test]
     fn test_newlines() {
         let test_bytes = "a\n\nb\nc\n\n\nd".as_bytes().to_vec();
-        let result = Result { bytes: 10, lines: 6, words: 4, in_word: false };
+        let result = Result { bytes: 10, chars: 10, lines: 6, words: 4, in_word: false };
         assert_eq!(analyze_bytes(test_bytes) , result);
     }
 }

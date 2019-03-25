@@ -18,13 +18,13 @@ fn main() {
 
     let result: Result;
     if let Some(filename) = matches.value_of("filename") {
-        result = analyze_file(filename); 
+        result = analyze_file(filename);
     } else {
         println!("STDIN not implemented yet");
         process::exit(1);
     }
 
-    write_counts(result, matches); 
+    write_counts(result, matches);
 }
 
 fn write_counts(result: Result, matches: clap::ArgMatches) {
@@ -43,11 +43,9 @@ fn write_counts(result: Result, matches: clap::ArgMatches) {
         print!("{:8}", result.words);
     }
 
-    /*
     if matches.is_present("print_chars") {
         print!("{:8}", result.chars);
     }
-    */
 
     if no_args || matches.is_present("print_bytes") {
         print!("{:8}", result.bytes);
